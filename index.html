@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Doctor Consultation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and overall body */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('https://img.freepik.com/free-vector/gradient-abstract-wireframe-background_23-2149009903.jpg?semt=ais_items_boosted&w=740');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Default: Dark theme overlay */
+            background-color: rgba(26, 32, 44, 0.85);
+            background-blend-mode: multiply;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #e2e8f0; /* Default text color for dark mode */
+            font-size: 16px;
+            line-height: 1.6;
+            transition: background-color 0.5s ease; /* Smooth transition for theme change */
+        }
+
+        /* Light Mode Styles */
+        body.light-mode {
+            background-image: url('https://img.freepik.com/free-vector/gradient-abstract-wireframe-background_23-2149009903.jpg?semt=ais_items_boosted&w=740');
+            background-color: rgba(248, 248, 248, 0.85); /* Light background with opacity */
+            color: #2d3748; /* Darker text color for light mode */
+        }
+        body.light-mode .doctor-app-container {
+            background-color: #ffffff; /* White container */
+            border-color: #cbd5e0; /* Light border */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+        }
+        body.light-mode .app-header h1 {
+            color: #1a202c; /* Darker header text */
+            text-shadow: none;
+        }
+        body.light-mode .disclaimer {
+            color: #c53030; /* Slightly darker red for light mode */
+            background-color: #ffebeb; /* Light red background */
+            border-color: #fc8181;
+        }
+        body.light-mode .gender-selection {
+            background-color: #f7fafc; /* Very light background */
+            border-color: #e2e8f0;
+        }
+        body.light-mode .gender-option input[type="radio"] {
+            border-color: #38a169; /* Green radio button */
+            background-color: #ffffff;
+        }
+        body.light-mode .gender-option input[type="radio"]::before {
+            background-color: #38a169; /* Green fill */
+        }
+        body.light-mode .gender-option {
+            color: #2d3748;
+        }
+        body.light-mode .chat-history {
+            background-color: #f0f4f8; /* Lightest background for chat */
+            border-color: #e2e8f0;
+        }
+        body.light-mode .chat-history::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        body.light-mode .chat-history::-webkit-scrollbar-thumb {
+            background: #48bb78; /* Green thumb */
+        }
+        body.light-mode .chat-history::-webkit-scrollbar-thumb:hover {
+            background: #38a169;
+        }
+        body.light-mode .user-message {
+            background: linear-gradient(to right, #48bb78, #38a169); /* Green gradient */
+            color: white;
+        }
+        body.light-mode .ai-message {
+            background-color: #e2e8f0; /* Light grey */
+            color: #2d3748; /* Dark text */
+        }
+        body.light-mode .input-group input {
+            background-color: #ffffff;
+            border-color: #cbd5e0;
+            color: #2d3748;
+        }
+        body.light-mode .input-group input::placeholder {
+            color: #a0aec0;
+        }
+        body.light-mode .input-group input:focus {
+            border-color: #48bb78;
+            box-shadow: 0 0 0 5px rgba(72, 187, 120, 0.3);
+        }
+        body.light-mode .input-group button {
+            background: linear-gradient(to right, #48bb78, #38a169); /* Green gradient */
+            color: white;
+        }
+        body.light-mode .input-group button:hover {
+            background: linear-gradient(to right, #38a169, #48bb78);
+        }
+        body.light-mode .input-group button:disabled {
+            background: #a0aec0;
+            color: #cbd5e0;
+        }
+        body.light-mode .loading-indicator {
+            color: #718096;
+        }
+        body.light-mode .app-footer {
+            border-top-color: #e2e8f0;
+            color: #718096;
+        }
+        body.light-mode .rate-button {
+            background: linear-gradient(to right, #4299e1, #3182ce); /* Blue gradient */
+            color: white;
+        }
+        body.light-mode .rate-button:hover {
+            background: linear-gradient(to right, #3182ce, #4299e1);
+        }
+        body.light-mode .modal-content {
+            background-color: #ffffff;
+            border-color: #cbd5e0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: #2d3748;
+        }
+        body.light-mode .modal-header h2 {
+            color: #1a202c;
+        }
+        body.light-mode .modal-header {
+            border-bottom-color: #e2e8f0;
+        }
+        body.light-mode .close-button {
+            color: #718096;
+        }
+        body.light-mode .close-button:hover {
+            color: #c53030;
+        }
+        body.light-mode .modal-body::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        body.light-mode .modal-body::-webkit-scrollbar-thumb {
+            background: #48bb78;
+        }
+        body.light-mode .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #38a169;
+        }
+        body.light-mode .theme-toggle-button {
+            background-color: #e2e8f0; /* Light background for toggle */
+            color: #2d3748; /* Dark icon */
+            border: 1px solid #cbd5e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        body.light-mode .theme-toggle-button:hover {
+            background-color: #cbd5e0;
+        }
+
+
+        /* Main app container */
+        .doctor-app-container {
+            background-color: #2a3340;
+            padding: 32px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            min-height: 700px;
+            border: 1px solid #4a5568;
+            gap: 25px;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        /* Header styling */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 5px;
+        }
+
+        .app-header h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            color: #66e0c0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: -0.02em;
+            transition: color 0.5s ease;
+        }
+
+        /* Disclaimer styling */
+        .disclaimer {
+            font-size: 0.95rem;
+            text-align: center;
+            color: #ff6b6b;
+            background-color: #3b2b2b;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid #8b0000;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            font-weight: 500;
+            transition: all 0.5s ease;
+        }
+        /* Specific styling for disclaimer in footer */
+        .app-footer .disclaimer {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        /* Gender selection styling */
+        .gender-selection {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 5px;
+            padding: 15px;
+            background-color: #2d3748;
+            border-radius: 12px;
+            border: 1px solid #4a5568;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+        }
+
+        .gender-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #e2e8f0;
+            transition: color 0.5s ease;
+        }
+
+        .gender-option input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #66e0c0;
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            display: grid;
+            place-content: center;
+            background-color: #1f2937;
+            transition: all 0.5s ease;
+        }
+
+        .gender-option input[type="radio"]::before {
+            content: "";
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.2s ease-in-out, background-color 0.5s ease;
+            background-color: #66e0c0;
+        }
+
+        .gender-option input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        /* Chat history area */
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            border: 1px solid #4a5568;
+            border-radius: 18px;
+            margin-bottom: 5px;
+            background-color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+
+        /* Scrollbar styling for Webkit browsers */
+        .chat-history::-webkit-scrollbar {
+            width: 10px;
+        }
+        .chat-history::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 10px;
+            transition: background 0.5s ease;
+        }
+        .chat-history::-webkit-scrollbar-thumb {
+            background: #66e0c0;
+            border-radius: 10px;
+            transition: background 0.5s ease;
+        }
+        .chat-history::-webkit-scrollbar-thumb:hover {
+            background: #4cc9a8;
+        }
+
+        /* Message bubble styling */
+        .message-bubble {
+            max-width: 80%;
+            padding: 14px 20px;
+            border-radius: 22px;
+            word-wrap: break-word;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(25px);
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        /* Animation for message bubbles */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            background: linear-gradient(to right, #20c997, #17a2b8);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 8px;
+            font-weight: 500;
+        }
+
+        .ai-message {
+            background-color: #3f4a59;
+            color: #e2e8f0;
+            align-self: flex-start;
+            border-bottom-left-radius: 8px;
+            font-weight: 400;
+        }
+
+        .message-label {
+            font-weight: 600;
+            margin-right: 8px;
+            color: #c4d8e7; /* A slightly lighter shade for labels */
+        }
+        .user-message .message-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .ai-message .message-label {
+             color: #a0aec0; /* A contrasting color for AI labels */
+        }
+
+
+        /* Input group styling */
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .input-group input {
+            padding: 16px;
+            border: 1px solid #4a5568;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            background-color: #1f2937;
+            color: #e2e8f0;
+            transition: all 0.5s ease;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: 400;
+        }
+
+        .input-group input::placeholder {
+            color: #a0aec0;
+            font-style: italic;
+            transition: color 0.5s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #66e0c0;
+            box-shadow: 0 0 0 5px rgba(102, 224, 192, 0.3);
+        }
+
+        .input-group button {
+            background: linear-gradient(to right, #66e0c0, #17a2b8);
+            color: #1a202c;
+            padding: 16px 30px;
+            border-radius: 14px;
+            font-weight: 700;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .input-group button:hover {
+            background: linear-gradient(to right, #17a2b8, #66e0c0);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-group button:disabled {
+            background: #4a5568;
+            color: #a0aec0;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: translateY(0);
+        }
+
+        /* Loading indicator styling */
+        .loading-indicator {
+            display: flex; /* Changed to flex to center dots */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-style: italic;
+            color: #a0aec0;
+            font-weight: 400;
+            transition: color 0.5s ease;
+        }
+
+        .loading-dot {
+            opacity: 0;
+            animation: pulse-dot 1.5s infinite ease-in-out;
+            margin: 0 2px;
+            font-size: 1.5em; /* Larger dots */
+            line-height: 1;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: 0s; }
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse-dot {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.2; transform: scale(0.8); }
+        }
+
+        /* AI Doctor Icon with animation */
+        .ai-doctor-icon {
+            display: none; /* Hidden by default */
+            font-size: 3rem;
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            animation: bounce 0.8s infinite alternate;
+            transition: transform 0.3s ease;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        /* New animation for when AI is thinking */
+        .ai-doctor-icon.thinking {
+            animation: thinking-pulse 1.2s infinite ease-in-out;
+        }
+        @keyframes thinking-pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+
+        /* Modals (Summary & Rating) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #2a3340;
+            margin: auto;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 600px;
+            color: #e2e8f0;
+            position: relative;
+            animation: fadeInScale 0.3s ease-out forwards;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #4a5568;
+            padding-bottom: 15px;
+            transition: border-color 0.5s ease;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #66e0c0;
+            transition: color 0.5s ease;
+        }
+
+        .close-button {
+            color: #a0aec0;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover {
+            color: #ff6b6b;
+        }
+
+        .modal-body {
+            font-size: 1rem;
+            line-height: 1.7;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-body::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 10px;
+            transition: background 0.5s ease;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #66e0c0;
+            border-radius: 10px;
+            transition: background 0.5s ease;
+        }
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #4cc9a8;
+        }
+
+        .summary-loading-indicator {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+            color: #a0aec0;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        /* Footer Styling */
+        .app-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #4a5568;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a0aec0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            transition: all 0.5s ease;
+        }
+
+        .rate-button {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            width: fit-content;
+        }
+
+        .rate-button:hover {
+            background: linear-gradient(to right, #2980b9, #3498db);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Theme Toggle Button Styling */
+        .theme-toggle-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #1f2937; /* Dark background for toggle */
+            color: #e2e8f0; /* Light icon */
+            border: 1px solid #4a5568;
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 100; /* Ensure it's above other content */
+        }
+
+        .theme-toggle-button:hover {
+            background-color: #2d3748;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* New Chat Button Styling */
+        .new-chat-button {
+            background: linear-gradient(to right, #e74c3c, #c0392b); /* Reddish gradient */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            width: fit-content;
+            margin-top: 10px; /* Space above it */
+        }
+        .new-chat-button:hover {
+            background: linear-gradient(to right, #c0392b, #e74c3c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .new-chat-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: translateY(0);
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .doctor-app-container {
+                padding: 20px;
+                min-height: 80vh;
+                border-radius: 16px;
+                gap: 15px;
+            }
+            .app-header h1 {
+                font-size: 2rem;
+            }
+            .app-header span {
+                font-size: 3.5rem;
+            }
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .input-group input,
+            .input-group button {
+                width: 100%;
+                padding: 12px;
+                border-radius: 10px;
+                font-size: 1rem;
+            }
+            .message-bubble {
+                max-width: 100%;
+                padding: 10px 15px;
+                font-size: 0.95rem;
+            }
+            .chat-history {
+                padding: 15px;
+                border-radius: 14px;
+                gap: 12px;
+            }
+            .disclaimer {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+            .gender-selection {
+                flex-direction: column;
+                gap: 15px;
+                padding: 12px;
+            }
+            .gender-option input[type="radio"] {
+                width: 18px;
+                height: 18px;
+            }
+            .gender-option input[type="radio"]::before {
+                width: 9px;
+                height: 9px;
+            }
+            .ai-doctor-icon {
+                font-size: 2.5rem;
+            }
+            .summary-button {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            .modal-content {
+                padding: 20px;
+                border-radius: 16px;
+            }
+            .modal-header h2 {
+                font-size: 1.5rem;
+            }
+            .close-button {
+                font-size: 1.8rem;
+            }
+            .app-footer {
+                flex-direction: column;
+                padding-top: 15px;
+                gap: 10px;
+            }
+            .rate-button {
+                width: 100%;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            .theme-toggle-button {
+                top: 15px;
+                right: 15px;
+                padding: 8px 12px;
+                font-size: 1rem;
+            }
+            .new-chat-button {
+                width: 100%;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <button id="themeToggleButton" class="theme-toggle-button">
+        <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
+    </button>
+
+    <div class="doctor-app-container">
+        <div class="app-header">
+            <span class="text-5xl">🩺</span>
+            <h1 class="text-center">AI Doctor Consultation</h1>
+        </div>
+
+        <div class="gender-selection">
+            <label class="gender-option">
+                <input type="radio" name="doctorGender" value="male" checked>
+                Male Doctor 👨‍⚕️
+            </label>
+            <label class="gender-option">
+                <input type="radio" name="doctorGender" value="female">
+                Female Doctor 👩‍⚕️
+            </label>
+        </div>
+
+        <div id="chatHistory" class="chat-history">
+            </div>
+
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            AI Doctor is thinking<span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span>
+        </div>
+        <div id="aiDoctorIcon" class="ai-doctor-icon"></div>
+
+
+        <div class="input-group">
+            <input
+                type="text"
+                id="userInput"
+                placeholder="Type your symptoms or question here..."
+                class="flex-grow"
+            />
+            <button
+                id="sendBtn"
+            >
+                Send
+            </button>
+        </div>
+
+        <div id="appFooter" class="app-footer">
+            <button id="newChatBtn" class="new-chat-button">
+                New Chat 💬
+            </button>
+            <span>© 2024 AI Doctor Consult. All rights reserved.</span>
+            <span class="text-sm text-gray-500">Developed by Abdul Hakeem</span>
+            <p class="disclaimer">
+                Disclaimer: This AI Doctor is for simulation purposes only and cannot provide real medical advice. Always consult a qualified healthcare professional for any health concerns.
+            </p>
+            <button id="rateAppBtn" class="rate-button">Rate App ⭐</button>
+        </div>
+    </div>
+
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Thank You!</h2>
+                <span class="close-button" id="closeRatingModalBtn">&times;</span>
+            </div>
+            <div class="modal-body text-center">
+                <p class="text-lg mb-4">Thank you for rating the AI Doctor App!</p>
+                <p class="text-sm text-gray-400">Your feedback helps us improve.</p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="messageSentSound" src="path/to/your/sent_sound.mp3" preload="auto"></audio>
+    <audio id="messageReceivedSound" src="path/to/your/received_sound.mp3" preload="auto"></audio>
+
+    <script>
+        // Get references to HTML elements
+        const chatHistoryDiv = document.getElementById('chatHistory');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const doctorGenderRadios = document.querySelectorAll('input[name="doctorGender"]');
+        const aiDoctorIcon = document.getElementById('aiDoctorIcon');
+        const rateAppBtn = document.getElementById('rateAppBtn');
+        const ratingModal = document.getElementById('ratingModal');
+        const closeRatingModalBtn = document.getElementById('closeRatingModalBtn');
+        const newChatBtn = document.getElementById('newChatBtn'); // New chat button reference
+
+        // Get references to audio elements
+        const messageSentSound = document.getElementById('messageSentSound');
+        const messageReceivedSound = document.getElementById('messageReceivedSound');
+
+        // Theme toggle elements
+        const themeToggleButton = document.getElementById('themeToggleButton');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+
+        // Store chat history for LLM context
+        let chatHistory = [];
+        let currentDoctorEmoji = "👨‍⚕️";
+        const userName = "Jimmy"; // Updated user's name to Jimmy
+
+        /**
+         * Initializes the chat history with a system prompt and an initial greeting
+         * based on the selected doctor's gender. This also clears the chat for a new conversation.
+         * @param {string} gender - 'male' or 'female'.
+         */
+        function initializeChatHistory(gender) {
+            let genderSpecificPrompt = "";
+            let initialGreeting = "";
+
+            if (gender === 'male') {
+                genderSpecificPrompt = "You are an AI male medical assistant.";
+                initialGreeting = `Hello ${userName}! I'm your AI Male Doctor.`; // Personalized greeting
+                currentDoctorEmoji = "👨‍⚕️";
+            } else { // female
+                genderSpecificPrompt = "You are an AI female medical assistant.";
+                initialGreeting = `Hello ${userName}! I'm your AI Female Doctor.`; // Personalized greeting
+                currentDoctorEmoji = "👩‍⚕️";
+            }
+            aiDoctorIcon.textContent = currentDoctorEmoji;
+
+            // Clear existing chat history in UI and array
+            chatHistoryDiv.innerHTML = '';
+            chatHistory = [
+                { role: "user", parts: [{ text: `${genderSpecificPrompt} Your purpose is to provide general, simulated health information and advice based on user input. Always include a disclaimer that you are not a real doctor and cannot provide actual medical advice. Encourage users to consult a real healthcare professional for any health concerns. Be helpful and empathetic.` }] }
+            ];
+
+            // Add the initial AI greeting to the UI and chat history
+            const fullGreeting = `${initialGreeting} Please tell me about your symptoms or ask any health-related questions.`;
+            addMessageToChat(fullGreeting, 'ai');
+            chatHistory.push({ role: "model", parts: [{ text: fullGreeting }] });
+        }
+
+        /**
+         * Adds a message bubble to the chat history display.
+         * @param {string} text - The text content of the message.
+         * @param {string} sender - 'user' or 'ai'.
+         */
+        function addMessageToChat(text, sender) {
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble');
+
+            const labelSpan = document.createElement('span');
+            labelSpan.classList.add('message-label');
+
+            if (sender === 'user') {
+                messageBubble.classList.add('user-message');
+                labelSpan.textContent = 'You: ';
+            } else {
+                messageBubble.classList.add('ai-message');
+                labelSpan.textContent = 'AI Doctor: ';
+            }
+            
+            // Append label first, then text
+            messageBubble.appendChild(labelSpan);
+            messageBubble.appendChild(document.createTextNode(text)); // Use createTextNode for raw text
+
+            chatHistoryDiv.appendChild(messageBubble);
+
+            // Force reflow to restart animation for each new message
+            void messageBubble.offsetWidth;
+            messageBubble.style.animation = 'none';
+            setTimeout(() => {
+                messageBubble.style.animation = '';
+            }, 10);
+
+            // Smooth scroll to the bottom of the chat history
+            chatHistoryDiv.scrollTo({
+                top: chatHistoryDiv.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        /**
+         * Sends the user's message to the AI Doctor (LLM) and displays the response.
+         */
+        async function sendMessage() {
+            const userText = userInput.value.trim();
+            if (userText === '') {
+                return;
+            }
+
+            addMessageToChat(userText, 'user');
+            userInput.value = '';
+
+            // Play message sent sound
+            if (messageSentSound) messageSentSound.play();
+
+            chatHistory.push({ role: "user", parts: [{ text: userText }] });
+
+            loadingIndicator.style.display = 'flex'; // Show typing indicator
+            aiDoctorIcon.style.display = 'block'; // Show AI icon
+            aiDoctorIcon.classList.add('thinking'); // Add thinking animation
+            sendBtn.disabled = true;
+            rateAppBtn.disabled = true;
+            themeToggleButton.disabled = true;
+            newChatBtn.disabled = true; // Disable new chat during AI response
+
+            try {
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 500
+                    }
+                };
+
+                const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                let aiResponseText = "I'm sorry, I couldn't get a response from the AI Doctor. Please try again.";
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    aiResponseText = result.candidates[0].content.parts[0].text;
+                } else if (result.error) {
+                    aiResponseText = `Error: ${result.error.message}`;
+                    console.error("AI API Error:", result.error);
+                }
+
+                addMessageToChat(aiResponseText, 'ai');
+                chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
+
+            } catch (error) {
+                console.error('Error communicating with AI Doctor:', error);
+                addMessageToChat("There was an error connecting to the AI Doctor. Please check your internet connection and try again.", 'ai');
+            } finally {
+                loadingIndicator.style.display = 'none'; // Hide typing indicator
+                aiDoctorIcon.classList.remove('thinking'); // Remove thinking animation
+                aiDoctorIcon.style.display = 'none'; // Hide AI icon after thinking
+                sendBtn.disabled = false;
+                rateAppBtn.disabled = false;
+                themeToggleButton.disabled = false;
+                newChatBtn.disabled = false; // Re-enable new chat
+
+                // Play message received sound
+                if (messageReceivedSound) messageReceivedSound.play();
+            }
+        }
+
+        /**
+         * Toggles between dark and light mode.
+         */
+        function toggleTheme() {
+            const isLightMode = document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+            updateThemeToggleButton(isLightMode);
+        }
+
+        /**
+         * Updates the theme toggle button's text and icon based on the current theme.
+         * @param {boolean} isLightMode - True if currently in light mode, false otherwise.
+         */
+        function updateThemeToggleButton(isLightMode) {
+            if (isLightMode) {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+            } else {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+            }
+        }
+
+        /**
+         * Starts a new chat session, clearing the history.
+         */
+        function startNewChat() {
+            const currentGender = document.querySelector('input[name="doctorGender"]:checked').value;
+            initializeChatHistory(currentGender);
+        }
+
+
+        // Event Listeners
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        doctorGenderRadios.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                initializeChatHistory(event.target.value);
+            });
+        });
+
+        // Rating button click handler
+        rateAppBtn.addEventListener('click', () => {
+            ratingModal.style.display = 'flex';
+        });
+
+        // Close rating modal functionality
+        closeRatingModalBtn.addEventListener('click', () => {
+            ratingModal.style.display = 'none';
+        });
+
+        // Close rating modal if clicked outside
+        ratingModal.addEventListener('click', (event) => {
+            if (event.target === ratingModal) {
+                ratingModal.style.display = 'none';
+            }
+        });
+
+        // Theme toggle button click handler
+        themeToggleButton.addEventListener('click', toggleTheme);
+
+        // New Chat button click handler
+        newChatBtn.addEventListener('click', startNewChat);
+
+        // Initial setup on window load
+        window.onload = () => {
+            const initialGender = document.querySelector('input[name="doctorGender"]:checked').value;
+            initializeChatHistory(initialGender);
+            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+
+            // Apply saved theme on load
+            const savedTheme = localStorage.getItem('theme');
+            const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+            if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
+                document.body.classList.add('light-mode');
+                updateThemeToggleButton(true);
+            } else {
+                updateThemeToggleButton(false);
+            }
+        };
+    </script>
+</body>
+</html>
